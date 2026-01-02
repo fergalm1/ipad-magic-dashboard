@@ -77,21 +77,11 @@ if (hour >= 21 || hour < 7) {
   document.getElementById('overlay').style.opacity = 0.6;
 }
 
-// ===== NEWS ROTATION (iOS SAFE) =====
-fetch(
-  'https://textise.net/showtext.aspx?strURL=' +
-  encodeURIComponent('https://www.rte.ie/feeds/rss/?index=/news/')
-)
-  .then(r => r.text())
-  .then(text => {
-    // Extract titles from plain text RSS
-    const matches = text.match(/<title>(.*?)<\/title>/g);
-    if (!matches) return;
-
-    const headlines = matches
-      .map(t => t.replace(/<\/?title>/g, ''))
-      .filter(t => t && t !== 'RTÉ News')
-      .slice(0, 10);
+// ===== NEWS ROTATION (iOS BULLETPROOF) =====
+fetch('news.json')
+  .then(r => r.json())
+  .then(items => {
+    if (!items.length) return;
 
     const rotator = document.getElementById('news-rotator');
     let i = 0;
@@ -99,9 +89,9 @@ fetch(
     function rotate() {
       rotator.style.opacity = 0;
       setTimeout(() => {
-        rotator.textContent = headlines[i];
+        rotator.textContent = items[i].title;
         rotator.style.opacity = 1;
-        i = (i + 1) % headlines.length;
+        i = (i + 1) % items.length;
       }, 800);
     }
 
@@ -112,6 +102,7 @@ fetch(
     document.getElementById('news-rotator').textContent =
       'News unavailable';
   });
+
 
 
 
