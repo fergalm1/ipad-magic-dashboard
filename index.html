@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iPad Magic Mirror Dashboard</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div id="overlay"></div>
+  <div id="container">
+    <div id="clock"></div>
+
+    <div class="row">
+      <div class="panel" id="calendar">
+        <h2>Calendar</h2>
+        <div id="calendar-content">
+          <p class="hint">Calendar locked. Enter secret on this iPad.</p>
+        </div>
+      </div>
+
+      <div class="panel" id="weather">
+        <h2>Weather – Borris, Co. Carlow</h2>
+        <div id="current-weather"></div>
+        <div id="sun-times"></div>
+        <div id="forecast" class="forecast-grid"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="news">
+      <h2>RTÉ News</h2>
+      <div id="news-rotator"></div>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
