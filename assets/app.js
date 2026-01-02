@@ -77,27 +77,39 @@ if (hour >= 21 || hour < 7) {
   document.getElementById('overlay').style.opacity = 0.6;
 }
 
-// ===== NEWS ROTATION =====
-fetch('https://api.allorigins.win/raw?url=https://www.rte.ie/feeds/rss/?index=/news/')
-  .then(r => r.text())
-  .then(str => new DOMParser().parseFromString(str, 'text/xml'))
+// ===== NEWS ROTATION (Reliable on iPad) =====
+fetch(
+  'https://api.rss2json.com/v1/api.json?rss_url=' +
+  encodeURIComponent('https://www.rte.ie/feeds/rss/?index=/news/')
+)
+  .then(r => r.json())
   .then(data => {
-    const items = [...data.querySelectorAll('item')].slice(0, 10);
+    if (!data.items) return;
+
+    const headlines = data.items
+      .slice(0, 10)
+      .map(item => item.title);
+
     const rotator = document.getElementById('news-rotator');
     let i = 0;
 
     function rotate() {
       rotator.style.opacity = 0;
       setTimeout(() => {
-        rotator.innerText = items[i].querySelector('title').textContent;
+        rotator.textContent = headlines[i];
         rotator.style.opacity = 1;
-        i = (i + 1) % items.length;
+        i = (i + 1) % headlines.length;
       }, 800);
     }
 
     rotate();
     setInterval(rotate, 12000);
+  })
+  .catch(() => {
+    document.getElementById('news-rotator').textContent =
+      'Unable to load news';
   });
+
 
 // ===== CALENDAR (PRIVATE) =====
 const icalUrl = localStorage.getItem('ICAL_URL');
