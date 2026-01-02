@@ -77,18 +77,21 @@ if (hour >= 21 || hour < 7) {
   document.getElementById('overlay').style.opacity = 0.6;
 }
 
-// ===== NEWS ROTATION (Reliable on iPad) =====
+// ===== NEWS ROTATION (iOS SAFE) =====
 fetch(
-  'https://api.rss2json.com/v1/api.json?rss_url=' +
+  'https://textise.net/showtext.aspx?strURL=' +
   encodeURIComponent('https://www.rte.ie/feeds/rss/?index=/news/')
 )
-  .then(r => r.json())
-  .then(data => {
-    if (!data.items) return;
+  .then(r => r.text())
+  .then(text => {
+    // Extract titles from plain text RSS
+    const matches = text.match(/<title>(.*?)<\/title>/g);
+    if (!matches) return;
 
-    const headlines = data.items
-      .slice(0, 10)
-      .map(item => item.title);
+    const headlines = matches
+      .map(t => t.replace(/<\/?title>/g, ''))
+      .filter(t => t && t !== 'RTÉ News')
+      .slice(0, 10);
 
     const rotator = document.getElementById('news-rotator');
     let i = 0;
@@ -107,8 +110,9 @@ fetch(
   })
   .catch(() => {
     document.getElementById('news-rotator').textContent =
-      'Unable to load news';
+      'News unavailable';
   });
+
 
 
 // ===== CALENDAR (PRIVATE) =====
