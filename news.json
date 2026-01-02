@@ -1,1 +1,7 @@
-[]
+[
+  { "title": "RTÉ: Sample headline 1", "link": "#" },
+  { "title": "RTÉ: Sample headline 2", "link": "#" },
+  { "title": "RTÉ: Sample headline 3", "link": "#" },
+  { "title": "RTÉ: Sample headline 4", "link": "#" },
+  { "title": "RTÉ: Sample headline 5", "link": "#" }
+]
