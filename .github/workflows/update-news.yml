@@ -1,0 +1,36 @@
+name: Update RTÉ News
+
+# Run every hour and allow manual triggering
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch RTÉ RSS
+        run: |
+          curl -s https://www.rte.ie/feeds/rss/?index=/news/ > rss.xml
+
+      - name: Convert RSS to JSON
+        run: |
+          python3 - << 'EOF'
+import xml.etree.ElementTree as ET, json
+root = ET.parse("rss.xml").getroot()
+items = root.findall(".//item")[:10]  # take latest 10 headlines
+news = [{"title": i.findtext("title"), "link": i.findtext("link")} for i in items]
+with open("news.json", "w") as f:
+    json.dump(news, f, indent=2)
+EOF
+
+      - name: Commit and push updates
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add news.json
+          git commit -m "Update RTÉ news" || exit 0
+          git push
